@@ -1,0 +1,315 @@
+/* =========================================================
+   GOOGLE FONTS
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Oswald:wght@200..700&display=swap');
+
+@import "tailwindcss";
+
+
+/* =========================================================
+   ROOT VARIABLES
+   ========================================================= */
+
+:root {
+    --bg-primary: #2774ae;
+    --bg-secondary: #002e5d;
+    --page-background: linear-gradient(
+        135deg,
+        var(--bg-primary) 0%,
+        var(--bg-secondary) 55%,
+        var(--bg-secondary) 100%
+    );
+
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.75);
+    --text-muted: rgba(255, 255, 255, 0.55);
+
+    --border-light: rgba(255, 255, 255, 0.12);
+    --border-medium: rgba(255, 255, 255, 0.2);
+
+    --font-heading: 'Oswald', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-width: 320px;
+    min-height: 100vh;
+
+    font-family: var(--font-body);
+    color: var(--text-primary);
+
+    background: var(--page-background);
+
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* =========================================================
+   ROOT APP
+   ========================================================= */
+
+#root {
+    min-height: 100vh;
+    width: 100%;
+}
+
+
+/* =========================================================
+   TYPOGRAPHY
+   ========================================================= */
+
+h1,
+h2,
+h3 {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+h4,
+h5,
+h6 {
+    margin: 0;
+    font-family: var(--font-body);
+    line-height: 1.2;
+}
+
+p {
+    margin: 0;
+    font-family: var(--font-body);
+    line-height: 1.7;
+}
+
+a,
+button,
+input,
+textarea,
+select {
+    font-family: var(--font-body);
+}
+
+
+/* =========================================================
+   LINKS
+   ========================================================= */
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
+button {
+    border: 0;
+    outline: none;
+    cursor: pointer;
+    background: none;
+    color: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   IMAGES
+   ========================================================= */
+
+img,
+svg,
+video {
+    display: block;
+    max-width: 100%;
+}
+
+img {
+    height: auto;
+}
+
+
+/* =========================================================
+   FORM ELEMENTS
+   ========================================================= */
+
+input,
+textarea,
+select {
+    border: none;
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+}
+
+
+/* =========================================================
+   TEXT SELECTION
+   ========================================================= */
+
+::selection {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+::-moz-selection {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   CUSTOM SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #002e5d;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2774ae;
+    border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3d8ac7;
+}
+
+
+/* Firefox */
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #2774ae #002e5d;
+}
+
+
+/* =========================================================
+   SMOOTH SECTION TRANSITIONS
+   ========================================================= */
+
+section {
+    position: relative;
+    width: 100%;
+}
+
+
+/* =========================================================
+   GLASS EFFECT
+   ========================================================= */
+
+.glass {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-light);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+
+/* =========================================================
+   COMMON CONTAINER
+   ========================================================= */
+
+.container {
+    width: 100%;
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-inline: 24px;
+}
+
+
+/* =========================================================
+   UTILITY TEXT COLORS
+   ========================================================= */
+
+.text-primary {
+    color: var(--text-primary);
+}
+
+.text-secondary {
+    color: var(--text-secondary);
+}
+
+.text-muted {
+    color: var(--text-muted);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+    html {
+        scroll-padding-top: 70px;
+    }
+
+    .container {
+        padding-inline: 18px;
+    }
+
+    body {
+        background-attachment: scroll;
+    }
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
