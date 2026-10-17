@@ -12,20 +12,12 @@ import {
   Sparkles,
 } from "lucide-react";
 
-
-
-
 const initialForm = {
   name: "",
   email: "",
   subject: "",
   message: "",
 };
-
-
-// ============================================================
-// MAIN COMPONENT
-// ============================================================
 
 export default function Contact() {
   const [form, setForm] = useState(initialForm);
@@ -37,10 +29,9 @@ export default function Contact() {
 
   const [sending, setSending] = useState(false);
 
-
-  // ==========================================================
+  // ============================================================
   // INPUT CHANGE
-  // ==========================================================
+  // ============================================================
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,7 +41,6 @@ export default function Contact() {
       [name]: value,
     }));
 
-    // Clear previous status when visitor starts typing again
     if (status.message) {
       setStatus({
         type: "",
@@ -59,17 +49,16 @@ export default function Contact() {
     }
   };
 
-
-  // ==========================================================
+  // ============================================================
   // SUBMIT
-  // ==========================================================
+  // ============================================================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (sending) return;
 
-    // Basic frontend validation
+    // Basic validation
     if (
       !form.name.trim() ||
       !form.email.trim() ||
@@ -84,6 +73,17 @@ export default function Contact() {
       return;
     }
 
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(form.email.trim())) {
+      setStatus({
+        type: "error",
+        message: "Please enter a valid email address.",
+      });
+
+      return;
+    }
 
     setSending(true);
 
@@ -92,63 +92,62 @@ export default function Contact() {
       message: "",
     });
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+    const apiUrl =
+      import.meta.env.VITE_API_URL || "http://localhost:5000";
+
     try {
-      const response = await fetch(
-        (`${apiUrl}/api/contact`,
-        {
-          method: "POST",
+      const response = await fetch(`${apiUrl}/api/contact`, {
+        method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-          body: JSON.stringify(form),
-        }
-      );
+        body: JSON.stringify({
+          name: form.name.trim(),
+          email: form.email.trim(),
+          subject: form.subject.trim(),
+          message: form.message.trim(),
+        }),
+      });
 
+      let data = {};
 
-      const data = await response.json();
-
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Something went wrong."
+          data.message || "Something went wrong while sending your message."
         );
       }
 
-
       // SUCCESS
-
       setStatus({
         type: "success",
         message:
+          data.message ||
           "Message sent successfully! I'll get back to you soon.",
       });
 
-
       // Reset form
-
       setForm(initialForm);
-
     } catch (error) {
-
       console.error("Contact form error:", error);
 
       setStatus({
         type: "error",
         message:
-          error.message ||
+          error?.message ||
           "Unable to send your message. Please try again.",
       });
-
     } finally {
-
       setSending(false);
-
     }
   };
-
 
   return (
     <section
@@ -160,6 +159,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
         px-5
         pt-12
         pb-28
+        text-white
 
         sm:px-8
         sm:pt-16
@@ -170,12 +170,21 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
         lg:pb-40
       "
     >
-
       {/* ======================================================
           BACKGROUND GLOWS
       ====================================================== */}
 
-      <div
+      <motion.div
+        animate={{
+          x: [0, 40, 0],
+          y: [0, -25, 0],
+          opacity: [0.5, 0.8, 0.5],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
         className="
           pointer-events-none
           absolute
@@ -189,7 +198,17 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
         "
       />
 
-      <div
+      <motion.div
+        animate={{
+          x: [0, -35, 0],
+          y: [0, 30, 0],
+          opacity: [0.4, 0.7, 0.4],
+        }}
+        transition={{
+          duration: 12,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
         className="
           pointer-events-none
           absolute
@@ -202,7 +221,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
           blur-[170px]
         "
       />
-
 
       {/* ======================================================
           GRID BACKGROUND
@@ -219,20 +237,11 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
         "
       />
 
-
       {/* ======================================================
           MAIN
       ====================================================== */}
 
-      <div
-        className="
-          relative
-          z-10
-          mx-auto
-          max-w-7xl
-        "
-      >
-
+      <div className="relative z-10 mx-auto max-w-7xl">
         {/* ====================================================
             HEADER
         ==================================================== */}
@@ -254,11 +263,8 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
             duration: 0.8,
             ease: [0.16, 1, 0.3, 1],
           }}
-          className="
-            text-center
-          "
+          className="text-center"
         >
-
           <div
             className="
               mb-4
@@ -273,16 +279,13 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
               text-white/30
             "
           >
-
             <Mail
               size={15}
               className="text-cyan-300"
             />
 
             Get In Touch
-
           </div>
-
 
           <h2
             className="
@@ -297,7 +300,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
           >
             Let's Talk.
           </h2>
-
 
           <motion.div
             initial={{
@@ -323,7 +325,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
             "
           />
 
-
           <p
             className="
               mx-auto
@@ -339,9 +340,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
             collaboration or just want to say hello?
             Drop me a message.
           </p>
-
         </motion.div>
-
 
         {/* ====================================================
             CONTACT GRID
@@ -357,9 +356,8 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
             lg:grid-cols-[0.8fr_1.2fr]
           "
         >
-
           {/* ==================================================
-              LEFT INFO
+              LEFT INFORMATION
           ================================================== */}
 
           <motion.div
@@ -391,10 +389,18 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
               lg:p-9
             "
           >
-
             {/* Glow */}
 
-            <div
+            <motion.div
+              animate={{
+                scale: [1, 1.15, 1],
+                opacity: [0.4, 0.7, 0.4],
+              }}
+              transition={{
+                duration: 7,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
               className="
                 pointer-events-none
                 absolute
@@ -408,7 +414,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
               "
             />
 
-
             {/* Icon */}
 
             <motion.div
@@ -416,7 +421,14 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                 scale: 1.08,
                 rotate: 5,
               }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 15,
+              }}
               className="
+                relative
+                z-10
                 flex
                 h-16
                 w-16
@@ -430,11 +442,8 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                 shadow-lg
               "
             >
-
               <Mail size={27} />
-
             </motion.div>
-
 
             <h3
               className="
@@ -449,11 +458,11 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
             >
               Have something
               <br />
+
               <span className="text-white/35">
                 in mind?
               </span>
             </h3>
-
 
             <p
               className="
@@ -471,13 +480,13 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
               opportunities and ideas.
             </p>
 
+            {/* EMAIL */}
 
-            {/* ==================================================
-                EMAIL
-            ================================================== */}
-
-            <a
+            <motion.a
               href="mailto:radhikashashi24@gmail.com"
+              whileHover={{
+                y: -3,
+              }}
               className="
                 group
                 relative
@@ -498,9 +507,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                 hover:bg-white/[0.05]
               "
             >
-
               <div className="flex items-center gap-3">
-
                 <div
                   className="
                     flex
@@ -516,9 +523,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                   <Mail size={17} />
                 </div>
 
-
                 <div>
-
                   <p
                     className="
                       text-[8px]
@@ -540,11 +545,8 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                   >
                     radhikashashi24@gmail.com
                   </p>
-
                 </div>
-
               </div>
-
 
               <ArrowUpRight
                 size={16}
@@ -557,13 +559,9 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                   group-hover:-translate-y-1
                 "
               />
+            </motion.a>
 
-            </a>
-
-
-            {/* ==================================================
-                STATUS
-            ================================================== */}
+            {/* STATUS */}
 
             <div
               className="
@@ -579,8 +577,15 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                 text-white/25
               "
             >
-
-              <span
+              <motion.span
+                animate={{
+                  scale: [1, 1.4, 1],
+                  opacity: [1, 0.6, 1],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                }}
                 className="
                   h-2
                   w-2
@@ -591,11 +596,8 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
               />
 
               Available for opportunities
-
             </div>
-
           </motion.div>
-
 
           {/* ==================================================
               CONTACT FORM
@@ -631,10 +633,18 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
               lg:p-9
             "
           >
+            {/* Form glow */}
 
-            {/* Form top glow */}
-
-            <div
+            <motion.div
+              animate={{
+                x: [0, 30, 0],
+                y: [0, 20, 0],
+              }}
+              transition={{
+                duration: 9,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
               className="
                 pointer-events-none
                 absolute
@@ -648,7 +658,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
               "
             />
 
-
             <div
               className="
                 relative
@@ -659,9 +668,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                 justify-between
               "
             >
-
               <div>
-
                 <p
                   className="
                     text-[9px]
@@ -685,21 +692,26 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                 >
                   Tell me about it.
                 </h3>
-
               </div>
 
-
-              <Sparkles
-                size={22}
-                className="text-white/20"
-              />
-
+              <motion.div
+                animate={{
+                  rotate: [0, 10, -10, 0],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                }}
+              >
+                <Sparkles
+                  size={22}
+                  className="text-white/20"
+                />
+              </motion.div>
             </div>
 
-
-            {/* ==================================================
-                FORM
-            ================================================== */}
+            {/* FORM */}
 
             <form
               onSubmit={handleSubmit}
@@ -709,7 +721,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                 space-y-5
               "
             >
-
               {/* NAME + EMAIL */}
 
               <div
@@ -721,11 +732,9 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                   sm:grid-cols-2
                 "
               >
-
                 {/* NAME */}
 
                 <div>
-
                   <label
                     htmlFor="name"
                     className="
@@ -741,9 +750,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                     Your Name
                   </label>
 
-
                   <div className="relative">
-
                     <User
                       size={15}
                       className="
@@ -756,7 +763,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                       "
                     />
 
-
                     <input
                       id="name"
                       name="name"
@@ -765,6 +771,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                       onChange={handleChange}
                       placeholder="John Doe"
                       autoComplete="name"
+                      required
                       className="
                         w-full
                         rounded-2xl
@@ -787,18 +794,13 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                         focus:ring-2
                         focus:ring-cyan-300/[0.05]
                       "
-                      required
                     />
-
                   </div>
-
                 </div>
-
 
                 {/* EMAIL */}
 
                 <div>
-
                   <label
                     htmlFor="email"
                     className="
@@ -814,9 +816,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                     Email Address
                   </label>
 
-
                   <div className="relative">
-
                     <Mail
                       size={15}
                       className="
@@ -829,7 +829,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                       "
                     />
 
-
                     <input
                       id="email"
                       name="email"
@@ -838,6 +837,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                       onChange={handleChange}
                       placeholder="john@example.com"
                       autoComplete="email"
+                      required
                       className="
                         w-full
                         rounded-2xl
@@ -860,22 +860,14 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                         focus:ring-2
                         focus:ring-cyan-300/[0.05]
                       "
-                      required
                     />
-
                   </div>
-
                 </div>
-
               </div>
 
-
-              {/* ==================================================
-                  SUBJECT
-              ================================================== */}
+              {/* SUBJECT */}
 
               <div>
-
                 <label
                   htmlFor="subject"
                   className="
@@ -891,7 +883,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                   Subject
                 </label>
 
-
                 <input
                   id="subject"
                   name="subject"
@@ -899,6 +890,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                   value={form.subject}
                   onChange={handleChange}
                   placeholder="Let's build something together"
+                  required
                   className="
                     w-full
                     rounded-2xl
@@ -920,18 +912,12 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                     focus:ring-2
                     focus:ring-cyan-300/[0.05]
                   "
-                  required
                 />
-
               </div>
 
-
-              {/* ==================================================
-                  MESSAGE
-              ================================================== */}
+              {/* MESSAGE */}
 
               <div>
-
                 <label
                   htmlFor="message"
                   className="
@@ -947,9 +933,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                   Message
                 </label>
 
-
                 <div className="relative">
-
                   <MessageSquare
                     size={15}
                     className="
@@ -961,7 +945,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                     "
                   />
 
-
                   <textarea
                     id="message"
                     name="message"
@@ -969,6 +952,7 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                     onChange={handleChange}
                     placeholder="Tell me about your project, idea or opportunity..."
                     rows={6}
+                    required
                     className="
                       w-full
                       resize-none
@@ -992,20 +976,13 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                       focus:ring-2
                       focus:ring-cyan-300/[0.05]
                     "
-                    required
                   />
-
                 </div>
-
               </div>
 
+              {/* STATUS */}
 
-              {/* ==================================================
-                  STATUS MESSAGE
-              ================================================== */}
-
-              <AnimatePresence>
-
+              <AnimatePresence mode="wait">
                 {status.message && (
                   <motion.div
                     initial={{
@@ -1023,6 +1000,9 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                       y: -10,
                       height: 0,
                     }}
+                    transition={{
+                      duration: 0.3,
+                    }}
                     className={`
                       flex
                       items-center
@@ -1032,40 +1012,25 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                       px-4
                       py-3
                       text-xs
-
                       ${
                         status.type === "success"
-                          ? `
-                            border-emerald-400/10
-                            bg-emerald-400/[0.05]
-                            text-emerald-300/70
-                          `
-                          : `
-                            border-red-400/10
-                            bg-red-400/[0.05]
-                            text-red-300/70
-                          `
+                          ? "border-emerald-400/10 bg-emerald-400/[0.05] text-emerald-300/70"
+                          : "border-red-400/10 bg-red-400/[0.05] text-red-300/70"
                       }
                     `}
                   >
-
                     {status.type === "success" ? (
                       <CheckCircle2 size={16} />
                     ) : (
                       <AlertCircle size={16} />
                     )}
 
-                    {status.message}
-
+                    <span>{status.message}</span>
                   </motion.div>
                 )}
-
               </AnimatePresence>
 
-
-              {/* ==================================================
-                  SEND BUTTON
-              ================================================== */}
+              {/* SEND BUTTON */}
 
               <motion.button
                 type="submit"
@@ -1075,14 +1040,14 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                     ? {
                         scale: 1.015,
                       }
-                    : {}
+                    : undefined
                 }
                 whileTap={
                   !sending
                     ? {
                         scale: 0.98,
                       }
-                    : {}
+                    : undefined
                 }
                 className="
                   group
@@ -1108,7 +1073,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                   disabled:opacity-50
                 "
               >
-
                 {sending ? (
                   <>
                     <span
@@ -1124,7 +1088,6 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                     />
 
                     Sending...
-
                   </>
                 ) : (
                   <>
@@ -1139,20 +1102,68 @@ const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
                         group-hover:-translate-y-1
                       "
                     />
-
                   </>
                 )}
-
               </motion.button>
-
             </form>
-
           </motion.div>
-
         </div>
 
-      </div>
+        {/* ====================================================
+            BOTTOM DECORATION
+        ==================================================== */}
 
+        <motion.div
+          initial={{
+            opacity: 0,
+            scaleX: 0,
+          }}
+          whileInView={{
+            opacity: 1,
+            scaleX: 1,
+          }}
+          viewport={{
+            once: false,
+          }}
+          transition={{
+            duration: 1,
+          }}
+          className="
+            mx-auto
+            mt-20
+            h-px
+            max-w-3xl
+            bg-gradient-to-r
+            from-transparent
+            via-white/10
+            to-transparent
+          "
+        />
+
+        <motion.p
+          initial={{
+            opacity: 0,
+            y: 15,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
+          viewport={{
+            once: false,
+          }}
+          className="
+            mt-7
+            text-center
+            text-[10px]
+            uppercase
+            tracking-[0.3em]
+            text-white/15
+          "
+        >
+          Let's create something extraordinary.
+        </motion.p>
+      </div>
     </section>
   );
 }
